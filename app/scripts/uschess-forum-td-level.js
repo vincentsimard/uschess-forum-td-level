@@ -7,14 +7,6 @@ var isUSCFIdNode = function(item) {
   return item.textContent.indexOf('USCFId') > -1;
 };
 
-var processProfile = function(profile) {
-  var ddsArray = Array.prototype.slice.call(profile.querySelectorAll('dd'));
-  var idNode = ddsArray.filter(isUSCFIdNode)[0];
-  var id = idNode.textContent.replace('USCFId: ', '');
-
-  wrapElement(idNode, id);
-};
-
 var wrapElement = function(node, id) {
   var createUSCFLink = function(node, id) {
     var link = document.createElement('a');
@@ -23,7 +15,7 @@ var wrapElement = function(node, id) {
 
     return link;
   };
-  
+
   var parent = node.parentNode;
 
   var position = 0;
@@ -35,6 +27,43 @@ var wrapElement = function(node, id) {
   };
 
   parent.insertBefore(createUSCFLink(node, id), parent.childNodes[position]);
+};
+
+var getTDLevel = function(node, id) {
+  var url = 'http://www.uschess.org/msa/MbrDtlTnmtDir.php?' + id;
+  var request = new XMLHttpRequest();
+  request.open('GET', url, true);
+
+  request.onload = function() {
+    if (request.status >= 200 && request.status < 400) {
+      // Success!
+      var resp = request.responseText;
+
+      var level = resp;
+      level = level.substring(level.indexOf('Certification Level') + 35);
+      level = level.substring(0, level.indexOf('</b>'));
+
+      console.log(level, node.parentNode);
+    } else {
+      // We reached our target server, but it returned an error
+    }
+  };
+
+  request.onerror = function() {
+    // There was a connection error of some sort
+  };
+
+  request.send();
+};
+
+var processProfile = function(profile) {
+  var ddsArray = Array.prototype.slice.call(profile.querySelectorAll('dd'));
+  var idNode = ddsArray.filter(isUSCFIdNode)[0];
+  var id = idNode.textContent.replace('USCFId: ', '');
+
+  wrapElement(idNode, id);
+
+  getTDLevel(idNode, id);
 };
 
 forEach.call(postProfiles, processProfile);
