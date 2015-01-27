@@ -3,11 +3,11 @@
 var forEach = Array.prototype.forEach;
 var postProfiles = document.querySelectorAll('.post .postprofile');
 
-var isUSCFIdNode = function(item) {
+function isUSCFIdNode(item) {
   return item.textContent.indexOf('USCFId') > -1;
-};
+}
 
-var wrapElement = function(node, id) {
+function wrapElement(node, id) {
   var createUSCFLink = function(node, id) {
     var link = document.createElement('a');
     link.href = 'http://www.uschess.org/msa/MbrDtlMain.php?' + id;
@@ -27,17 +27,17 @@ var wrapElement = function(node, id) {
   };
 
   parent.insertBefore(createUSCFLink(node, id), parent.childNodes[position]);
-};
+}
 
-var appendTDLevel = function(node, level) {
+function appendTDLevel(node, level) {
   var levelNode = document.createElement('dd');
   var content = document.createTextNode(level);
   
   levelNode.appendChild(content);
   node.parentNode.parentNode.appendChild(levelNode);
-};
+}
 
-var getTDLevel = function(node, id) {
+function getTDLevel(node, id) {
   var url = 'http://www.uschess.org/msa/MbrDtlTnmtDir.php?' + id;
   var request = new XMLHttpRequest();
   
@@ -57,9 +57,9 @@ var getTDLevel = function(node, id) {
   };
 
   request.send();
-};
+}
 
-var processProfile = function(profile) {
+function processProfile(profile) {
   var ddsArray = Array.prototype.slice.call(profile.querySelectorAll('dd'));
   var idNode = ddsArray.filter(isUSCFIdNode)[0];
   var id = idNode.textContent.replace('USCFId: ', '');
