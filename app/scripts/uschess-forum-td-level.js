@@ -29,28 +29,31 @@ var wrapElement = function(node, id) {
   parent.insertBefore(createUSCFLink(node, id), parent.childNodes[position]);
 };
 
+var appendTDLevel = function(node, level) {
+  var levelNode = document.createElement('dd');
+  var content = document.createTextNode(level);
+  
+  levelNode.appendChild(content);
+  node.parentNode.parentNode.appendChild(levelNode);
+};
+
 var getTDLevel = function(node, id) {
   var url = 'http://www.uschess.org/msa/MbrDtlTnmtDir.php?' + id;
   var request = new XMLHttpRequest();
+  
   request.open('GET', url, true);
 
+  request.onerror = function() {};
   request.onload = function() {
     if (request.status >= 200 && request.status < 400) {
-      // Success!
       var resp = request.responseText;
 
       var level = resp;
       level = level.substring(level.indexOf('Certification Level') + 35);
       level = level.substring(0, level.indexOf('</b>'));
 
-      console.log(level, node.parentNode);
-    } else {
-      // We reached our target server, but it returned an error
+      appendTDLevel(node, level);
     }
-  };
-
-  request.onerror = function() {
-    // There was a connection error of some sort
   };
 
   request.send();
@@ -62,7 +65,6 @@ var processProfile = function(profile) {
   var id = idNode.textContent.replace('USCFId: ', '');
 
   wrapElement(idNode, id);
-
   getTDLevel(idNode, id);
 };
 
