@@ -1,7 +1,20 @@
 'use strict';
 
 var forEach = Array.prototype.forEach;
+var filter = Array.prototype.filter;
+
 var postProfiles = document.querySelectorAll('.post .postprofile');
+
+var crossTableSummaryTR = document.querySelectorAll('.topbar-middle table[border="1"] > tbody > tr:first-child table tr'); // @TODO: Come up with a better selector
+var tdTRs = filter.call(crossTableSummaryTR, function(node) {
+  return node.textContent.indexOf('TD') > -1;
+});
+
+
+
+function isCrossTable() {
+  return document.title.substr(0, 26) === 'USCF MSA - Cross Table for';
+}
 
 function isUSCFIdNode(item) {
   return item.textContent.indexOf('USCFId') > -1;
@@ -40,7 +53,7 @@ function appendTDLevel(node, level) {
 function getTDLevel(node, id) {
   var url = 'http://www.uschess.org/msa/MbrDtlTnmtDir.php?' + id;
   var request = new XMLHttpRequest();
-  
+
   request.open('GET', url, true);
 
   request.onerror = function() {};
@@ -68,4 +81,20 @@ function processProfile(profile) {
   getTDLevel(idNode, id);
 };
 
+// @TODO: Refactor to remove duplication with processProfile
+function processCrossTableTR(tr) {
+  var nameNode = tr.querySelector('td:last-of-type');
+  var idMatch = nameNode.textContent.match(/\(([^)]+)\)/);
+  var id = idMatch ? idMatch[1] : id;
+
+  wrapElement(nameNode, id);
+  getTDLevel(nameNode, id);
+};
+
+
+
 forEach.call(postProfiles, processProfile);
+
+if (isCrossTable()) {
+  forEach.call(tdTRs, processCrossTableTR);
+}

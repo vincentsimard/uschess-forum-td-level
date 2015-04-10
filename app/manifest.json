@@ -11,7 +11,8 @@
     "content_scripts": [
         {
             "matches": [
-                "http://*.uschess.org/forums/viewtopic.php*"
+                "http://*.uschess.org/forums/viewtopic.php*",
+                "http://*.uschess.org/msa/XtblMain.php*"
             ],
             "css": [
                 "styles/main.css"
