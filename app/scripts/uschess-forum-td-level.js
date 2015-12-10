@@ -13,7 +13,9 @@ var tdTRs = filter.call(crossTableSummaryTR, function(node) {
 
 
 function isCrossTable() {
-  return document.title.substr(0, 26) === 'USCF MSA - Cross Table for';
+  var title2014 = document.title.substr(0, 26) === 'USCF MSA - Cross Table for';
+  var title2015 = document.title.substr(0, 30) === 'US Chess MSA - Cross Table for';
+  return title2014 || title2015;
 }
 
 function isUSCFIdNode(item) {
@@ -36,8 +38,8 @@ function wrapElement(node, id) {
     if(parent.childNodes[i] === node) {
       position = i;
       break;
-    };
-  };
+    }
+  }
 
   parent.insertBefore(createUSCFLink(node, id), parent.childNodes[position]);
 }
@@ -79,7 +81,7 @@ function processProfile(profile) {
 
   wrapElement(idNode, id);
   getTDLevel(idNode, id);
-};
+}
 
 // @TODO: Refactor to remove duplication with processProfile
 function processCrossTableTR(tr) {
@@ -89,7 +91,7 @@ function processCrossTableTR(tr) {
 
   wrapElement(nameNode, id);
   getTDLevel(nameNode, id);
-};
+}
 
 
 
