@@ -47,9 +47,10 @@ function wrapElement(node, id) {
 function appendTDLevel(node, level) {
   var levelNode = document.createElement('dd');
   var content = document.createTextNode(level);
-  
+
   levelNode.appendChild(content);
-  node.parentNode.parentNode.appendChild(levelNode);
+
+  node.parentNode.appendChild(levelNode);
 }
 
 function getTDLevel(node, id) {
@@ -83,10 +84,15 @@ function processProfile(profile) {
   getTDLevel(idNode, id);
 }
 
-// @TODO: Refactor to remove duplication with processProfile
 function processCrossTableTR(tr) {
-  var nameNode = tr.querySelector('td:last-of-type');
-  var idMatch = nameNode.textContent.match(/\(([^)]+)\)/);
+  var nameNodes = tr.querySelectorAll('td:last-of-type b');
+  forEach.call(nameNodes, processCrossTableB);
+}
+
+// @TODO: Refactor to remove duplication with processProfile
+function processCrossTableB(nameNode) {
+  var idNode = nameNode.nextSibling.nextSibling;
+  var idMatch = idNode.textContent.match(/\(([^)]+)\)/);
   var id = idMatch ? idMatch[1] : id;
 
   wrapElement(nameNode, id);
